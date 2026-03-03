@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "paused": false,
+  "items": [
+    {
+      "id": 1,
+      "title": "New Product Launch",
+      "content": "We are excited to announce the launch of our new product line next month. Stay tuned for more details!",
+      "contentLink": "",
+      "imageUrl": "/images/gallery/news/20250302_180017-mm4p6zai-8ho6jo.jpg",
+      "createdAt": "2026-02-19T06:48:51.983Z",
+      "updatedAt": "2026-02-27T09:36:42.299Z"
+    },
+    {
+      "id": 2,
+      "title": "We are excited",
+      "content": "New Product Launch . Stay tuned for more details!\n\nCreated: 19 Feb 2026, 12:18 pm | Updated: 19 Feb 2026, 12:18 pm",
+      "contentLink": "",
+      "imageUrl": "",
+      "createdAt": "2026-02-20T07:31:21.892Z",
+      "updatedAt": "2026-02-20T07:31:21.892Z"
+    },
+    {
+      "id": 3,
+      "title": "Hlo",
+      "content": "Good MOrning",
+      "contentLink": "",
+      "imageUrl": "/images/gallery/news/20250304_144401-mm4p7v9v-3g3obw.jpg",
+      "createdAt": "2026-02-26T07:14:17.202Z",
+      "updatedAt": "2026-02-27T09:37:23.747Z"
+    },
+    {
+      "id": 4,
+      "title": "New Iphone",
+      "content": "Iphone 17 Pro",
+      "contentLink": "",
+      "imageUrl": "/images/gallery/news/antibiotics-mmaaez6v-g9enj7.jpg",
+      "createdAt": "2026-03-03T07:09:25.552Z",
+      "updatedAt": "2026-03-03T07:29:38.240Z"
+    }
+  ]
+}

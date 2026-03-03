@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Slider | Rudraksh Creation</title>
+    <link rel="stylesheet" href="news.css">
+</head>
+<body>
+    <main class="news-page">
+        <section class="news-container" aria-label="News updates">
+            <h1>News Slider</h1>
+            <h3>Welcome to the News Slider page of Rudraksh Creation. Here you can find the latest news and updates about our products and services.</h3>
+
+            <div id="newsSlider" class="news-slider">
+                <marquee id="newsMarquee" class="news-marquee" direction="up" scrollamount="2" aria-label="Running news">
+                    <ul id="newsList">
+                        <li>Loading latest news...</li>
+                    </ul>
+                </marquee>
+            </div>
+        </section>
+    </main>
+    <script>
+        (function () {
+            var fallbackItems = [
+                {
+                    title: "New Product Launch",
+                    content: "We are excited to announce the launch of our new product line next month. Stay tuned for more details!",
+                },
+                {
+                    title: "Upcoming Event",
+                    content: "Join us for our annual customer appreciation event on December 15th. More information will be available soon.",
+                },
+                {
+                    title: "Special Offer",
+                    content: "Get a 20% discount on all products during our holiday sale from December 1st to December 31st.",
+                },
+                {
+                    title: "Company Milestone",
+                    content: "We are proud to celebrate our 10th anniversary this year. Thank you for being a part of our journey!",
+                },
+                {
+                    title: "Community Engagement",
+                    content: "We recently partnered with local charities to support community development. Learn more about our initiatives on our website.",
+                },
+            ];
+
+            var listNode = document.getElementById("newsList");
+            var marqueeNode = document.getElementById("newsMarquee");
+            var sliderNode = document.getElementById("newsSlider");
+            if (!listNode) {
+                return;
+            }
+
+            var adminPaused = false;
+            var hoverPaused = false;
+
+            var escapeHtml = function (text) {
+                return String(text == null ? "" : text)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            };
+
+            var normalizeNewsUrl = function (value) {
+                var raw = String(value || "").trim();
+                if (!raw) {
+                    return "";
+                }
+                if (raw.charAt(0) === "/") {
+                    return raw;
+                }
+                if (!/^https?:\/\//i.test(raw)) {
+                    return "";
+                }
+                try {
+                    var parsed = new URL(raw, window.location.origin);
+                    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+                        return "";
+                    }
+                    return parsed.toString();
+                } catch (error) {
+                    return "";
+                }
+            };
+
+            var extractFirstUrl = function (value) {
+                var raw = String(value || "");
+                var match = raw.match(/https?:\/\/[^\s<>"']+/i);
+                if (!match || !match[0]) {
+                    return "";
+                }
+                return String(match[0]).replace(/[),.;!?]+$/g, "");
+            };
+
+            var extractFirstImageUrl = function (value) {
+                var raw = String(value || "");
+                var absoluteMatch = raw.match(/https?:\/\/[^\s<>"']+\.(?:png|jpe?g|webp|gif|avif)(?:\?[^\s<>"']*)?/i);
+                if (absoluteMatch && absoluteMatch[0]) {
+                    return String(absoluteMatch[0]).replace(/[),.;!?]+$/g, "");
+                }
+                var relativeMatch = raw.match(/\/images\/[^\s<>"']+\.(?:png|jpe?g|webp|gif|avif)(?:\?[^\s<>"']*)?/i);
+                if (relativeMatch && relativeMatch[0]) {
+                    return String(relativeMatch[0]).replace(/[),.;!?]+$/g, "");
+                }
+                return "";
+            };
+
+            var normalizeFolderName = function (value) {
+                var normalized = String(value || "")
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z0-9_-]+/g, "-")
+                    .replace(/^-+|-+$/g, "");
+                if (!/^[a-z0-9][a-z0-9_-]{0,39}$/.test(normalized)) {
+                    return "";
+                }
+                return normalized;
+            };
+
+            var resolveGalleryLink = function (value) {
+                var raw = String(value || "");
+                if (!raw) {
+                    return "";
+                }
+
+                var explicitGalleryPathMatch = raw.match(/(?:^|\s)(\/photo-gallery(?:\?folder=[^\s<>"']+)*)/i);
+                if (explicitGalleryPathMatch && explicitGalleryPathMatch[1]) {
+                    return normalizeNewsUrl(explicitGalleryPathMatch[1]);
+                }
+
+                var directiveMatch = raw.match(/\b(?:folder|gallery)\s*[:=]\s*(?:"([^"]+)"|'([^']+)'|([a-z0-9_-]{1,40}|all|all-folders?|allfolders?))/i);
+                var directiveValue = "";
+                if (directiveMatch) {
+                    directiveValue = String(directiveMatch[1] || directiveMatch[2] || directiveMatch[3] || "").trim().toLowerCase();
+                }
+                if (!directiveValue) {
+                    return "";
+                }
+
+                if (/^(all|all-folders?|allfolders?)$/.test(directiveValue)) {
+                    return "/photo-gallery";
+                }
+
+                var folderName = normalizeFolderName(directiveValue);
+                if (!folderName) {
+                    return "";
+                }
+
+                return "/photo-gallery?folder=" + encodeURIComponent(folderName);
+            };
+
+            var render = function (items) {
+                var rows = Array.isArray(items) ? items : [];
+                if (!rows.length) {
+                    listNode.innerHTML = "<li>No news available right now.</li>";
+                    return;
+                }
+
+                listNode.innerHTML = rows.map(function (item) {
+                    var title = escapeHtml(item && item.title);
+                    var rawContent = String((item && item.content) || "");
+                    var content = escapeHtml(rawContent);
+                    var contentLink = normalizeNewsUrl(item && item.contentLink);
+                    var detectedLink = normalizeNewsUrl(extractFirstUrl(rawContent));
+                    var imageUrl = normalizeNewsUrl(item && item.imageUrl) || normalizeNewsUrl(extractFirstImageUrl(rawContent));
+                    var galleryLink = resolveGalleryLink(rawContent);
+                    var newsLink = galleryLink || imageUrl || contentLink || detectedLink;
+                    var titleHtml = '<span class="news-feed-title"><strong>' + title + "</strong></span>";
+                    var contentHtml = newsLink
+                        ? '<a class="news-feed-content-link" href="' + escapeHtml(newsLink) + '" target="_blank" rel="noopener noreferrer">' + content + "</a>"
+                        : '<span class="news-feed-content-text">' + content + "</span>";
+
+                    return (
+                        '<li class="news-feed-item">' +
+                            '<div class="news-feed-body">' +
+                                '<p class="news-feed-line">' +
+                                    titleHtml +
+                                    '<span class="news-feed-separator"> - </span>' +
+                                    '<span class="news-feed-content">' + contentHtml + "</span>" +
+                                "</p>" +
+                            "</div>" +
+                        "</li>"
+                    );
+                }).join("");
+            };
+
+            var applyPauseState = function (paused) {
+                if (!marqueeNode) {
+                    return;
+                }
+                if (paused) {
+                    marqueeNode.stop();
+                    return;
+                }
+                marqueeNode.start();
+            };
+
+            var syncPauseState = function () {
+                applyPauseState(adminPaused || hoverPaused);
+            };
+
+            if (sliderNode) {
+                sliderNode.addEventListener("mouseenter", function () {
+                    hoverPaused = true;
+                    syncPauseState();
+                });
+                sliderNode.addEventListener("mouseleave", function () {
+                    hoverPaused = false;
+                    syncPauseState();
+                });
+            }
+
+            fetch("/admin/news-items-public")
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Request failed");
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (!data || !data.ok || !Array.isArray(data.items)) {
+                        throw new Error("Invalid response");
+                    }
+                    render(data.items);
+                    adminPaused = Boolean(data.paused);
+                    syncPauseState();
+                })
+                .catch(function () {
+                    render(fallbackItems);
+                    adminPaused = false;
+                    syncPauseState();
+                });
+        })();
+    </script>
+</body>
+</html>
