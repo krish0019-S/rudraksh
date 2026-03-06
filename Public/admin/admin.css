@@ -3,6 +3,7 @@
     --sidebar-accent: rgba(243, 155, 29, 0.18);
     --primary: #b31217;
     --primary-dark: #8f0e12;
+    --theme-title: #8f0e12;
     --accent: #f39b1d;
     --bg: #f4eded;
     --card: #ffffff;
@@ -187,6 +188,64 @@ body.admin-body.is-ready .admin-layout {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.sidebar-menu-toggle {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(243, 155, 29, 0.44);
+    background: rgba(18, 9, 9, 0.5);
+    color: #fff;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.sidebar-menu-toggle:hover {
+    background: rgba(243, 155, 29, 0.2);
+}
+
+.sidebar-menu-toggle:focus-visible {
+    outline: 2px solid rgba(243, 155, 29, 0.8);
+    outline-offset: 2px;
+}
+
+.sidebar-menu-toggle-icon {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    width: 14px;
+}
+
+.sidebar-menu-toggle-icon span {
+    width: 100%;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.sidebar.is-open .sidebar-menu-toggle-icon span:nth-child(1) {
+    transform: translateY(5px) rotate(45deg);
+}
+
+.sidebar.is-open .sidebar-menu-toggle-icon span:nth-child(2) {
+    opacity: 0;
+}
+
+.sidebar.is-open .sidebar-menu-toggle-icon span:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg);
 }
 
 .brand-logo {
@@ -580,6 +639,7 @@ body.admin-body.is-ready .admin-layout {
 .dashboard-header-row h1 {
     margin: 0;
     font-size: 2rem;
+    color: var(--theme-title);
 }
 
 .dashboard-header-row p {
@@ -645,7 +705,7 @@ body.admin-body.is-ready .admin-layout {
 
 .dashboard-metric-card p {
     margin: 0;
-    color: #513a3a;
+    color: var(--theme-title);
     font-weight: 500;
 }
 
@@ -713,6 +773,7 @@ body.admin-body.is-ready .admin-layout {
     margin: 0;
     font-size: 1.06rem;
     font-weight: 600;
+    color: var(--theme-title);
 }
 
 .dashboard-panel-analytics {
@@ -1211,6 +1272,7 @@ body.admin-body.is-ready .admin-layout {
 .content-header h1 {
     margin: 0 0 6px;
     font-size: 1.7rem;
+    color: var(--theme-title);
 }
 
 .content-header p {
@@ -1243,6 +1305,7 @@ body.admin-body.is-ready .admin-layout {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
+    color: var(--theme-title);
 }
 
 .manager-actions {
@@ -1532,7 +1595,7 @@ body.admin-body.is-ready .admin-layout {
     margin: 0;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #2a2324;
+    color: var(--theme-title);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1566,7 +1629,7 @@ body.admin-body.is-ready .admin-layout {
     text-transform: uppercase;
     letter-spacing: 1px;
     background: #fff7f4;
-    color: #4c3e40;
+    color: var(--theme-title);
     border-bottom-width: 1px;
 }
 
@@ -1701,6 +1764,7 @@ body.admin-body.is-ready .admin-layout {
     margin: 0 0 12px;
     font-size: 1.06rem;
     font-weight: 600;
+    color: var(--theme-title);
 }
 
 .news-form-modal {
@@ -1762,7 +1826,7 @@ body.admin-body.is-ready .admin-layout {
     padding: 14px 14px;
     background: rgba(243, 155, 29, 0.08);
     border-bottom: 1px solid rgba(179, 18, 23, 0.14);
-    color: #695354;
+    color: var(--theme-title);
     font-size: 0.76rem;
     font-weight: 700;
     letter-spacing: 0.45px;
@@ -1885,7 +1949,7 @@ body.admin-body.is-ready .admin-layout {
     font-size: 1.08em;
     font-weight: 700;
     line-height: 1.2;
-    color: #201819;
+    color: var(--theme-title);
 }
 
 .news-item-content {
@@ -1923,7 +1987,7 @@ body.admin-body.is-ready .admin-layout {
 .news-item-date {
     font-size: 1.02em;
     font-weight: 600;
-    color: #2f2526;
+    color: var(--theme-title);
 }
 
 .news-item-time {
@@ -2049,33 +2113,46 @@ body.admin-body.is-ready .admin-layout {
     .sidebar {
         width: 100%;
         flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        padding: 18px 14px 14px;
-        gap: 14px;
+        align-items: stretch;
+        padding: 14px;
+        gap: 0;
         border-right: 0;
         border-bottom: 1px solid rgba(243, 155, 29, 0.26);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .sidebar-header {
+        width: 100%;
+        align-items: center;
     }
 
     .brand {
-        width: 100%;
+        width: auto;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sidebar-menu-toggle {
+        display: inline-flex;
+        flex-shrink: 0;
     }
 
     .sidebar .nav {
         width: 100%;
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        margin-top: 12px;
+        border: 1px solid rgba(243, 155, 29, 0.3);
+        border-radius: 12px;
+        background: rgba(15, 7, 7, 0.74);
+        overflow: hidden;
+    }
+
+    .sidebar.is-open .nav {
         display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        gap: 8px;
-        overflow-x: auto;
-        padding-bottom: 4px;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        margin-top: 0;
     }
 
     .sidebar .nav::after {
@@ -2084,8 +2161,8 @@ body.admin-body.is-ready .admin-layout {
 
     .sidebar .nav-link {
         margin-bottom: 0;
-        flex: 0 0 auto;
-        white-space: nowrap;
+        width: 100%;
+        white-space: normal;
         padding: 10px 14px;
         border: 0;
         border-bottom: 1px solid rgba(243, 155, 29, 0.26);
@@ -2093,7 +2170,7 @@ body.admin-body.is-ready .admin-layout {
     }
 
     .sidebar .nav-link:last-child {
-        border-bottom: 1px solid rgba(243, 155, 29, 0.26);
+        border-bottom: 0;
     }
 
     .sidebar .nav-link::before {
@@ -2232,7 +2309,7 @@ body.admin-body.is-ready .admin-layout {
         font-weight: 600;
         letter-spacing: 0.3px;
         text-transform: uppercase;
-        color: var(--muted);
+        color: var(--theme-title);
         text-align: left;
     }
 
@@ -2480,7 +2557,7 @@ body.admin-body.is-ready .admin-layout {
         font-weight: 600;
         letter-spacing: 0.3px;
         text-transform: uppercase;
-        color: var(--muted);
+        color: var(--theme-title);
         text-align: left;
     }
 
@@ -2528,7 +2605,7 @@ body.admin-body.is-ready .admin-layout {
         font-weight: 700;
         letter-spacing: 0.32px;
         text-transform: uppercase;
-        color: #7a6667;
+        color: var(--theme-title);
     }
 
     .news-item-col-news,

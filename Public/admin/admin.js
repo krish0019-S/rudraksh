@@ -5,6 +5,8 @@ $(function () {
     var loginModalEl = document.getElementById("adminLoginModal");
     var resetModalEl = document.getElementById("adminResetModal");
     var newsFormModalEl = document.getElementById("newsFormModal");
+    var sidebar = $("#adminSidebar");
+    var sidebarMenuToggle = $("#sidebarMenuToggle");
     var sidebarPasswordLink = $("#sidebarPasswordLink");
     var loginError = $("#adminLoginError");
     var resetError = $("#adminResetError");
@@ -102,6 +104,7 @@ $(function () {
     var NEWS_CONTENT_MAX_LENGTH = 1210;
 
     var currentBanners = [];
+    var mobileSidebarQuery = window.matchMedia ? window.matchMedia("(max-width: 992px)") : null;
 
     var loginModal = null;
     var resetModal = null;
@@ -1701,6 +1704,30 @@ $(function () {
         window.history.replaceState(null, "", url.pathname + url.search);
     };
 
+    var isMobileSidebar = function () {
+        if (mobileSidebarQuery) {
+            return mobileSidebarQuery.matches;
+        }
+        return window.innerWidth <= 992;
+    };
+
+    var closeSidebarMenu = function () {
+        sidebar.removeClass("is-open");
+        sidebarMenuToggle.attr("aria-expanded", "false");
+    };
+
+    var toggleSidebarMenu = function (forceOpen) {
+        if (!isMobileSidebar()) {
+            closeSidebarMenu();
+            return;
+        }
+        var shouldOpen = typeof forceOpen === "boolean"
+            ? forceOpen
+            : !sidebar.hasClass("is-open");
+        sidebar.toggleClass("is-open", shouldOpen);
+        sidebarMenuToggle.attr("aria-expanded", shouldOpen ? "true" : "false");
+    };
+
     var setView = function (view, syncUrl) {
         var normalized = "dashboard";
         if (view === "dashboard" || view === "banners" || view === "enquiries" || view === "news" || view === "images" || view === "videos") {
@@ -1755,6 +1782,23 @@ $(function () {
     refreshAdminIdentity();
     ensureAuth();
     setView(getInitialView(), false);
+    closeSidebarMenu();
+
+    sidebarMenuToggle.on("click", function () {
+        toggleSidebarMenu();
+    });
+
+    $(window).on("resize", function () {
+        if (!isMobileSidebar()) {
+            closeSidebarMenu();
+        }
+    });
+
+    $(document).on("keydown", function (event) {
+        if (event && event.key === "Escape") {
+            closeSidebarMenu();
+        }
+    });
 
     navViewLinks.on("click", function (event) {
         event.preventDefault();
@@ -1763,6 +1807,7 @@ $(function () {
             return;
         }
         setView(view, true);
+        closeSidebarMenu();
     });
 
     $(".password-toggle").on("click", function () {
@@ -1790,6 +1835,7 @@ $(function () {
 
     sidebarPasswordLink.on("click", function (event) {
         event.preventDefault();
+        closeSidebarMenu();
         if (loginModal) {
             loginModal.hide();
         }
@@ -2943,6 +2989,7 @@ $(function () {
         if (event && typeof event.preventDefault === "function") {
             event.preventDefault();
         }
+        closeSidebarMenu();
         clearAuth();
         currentGalleryFolder = "";
         showOnlySelectedGalleryFolder = false;

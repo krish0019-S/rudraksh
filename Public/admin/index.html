@@ -33,15 +33,25 @@
         </div>
     </div>
     <div class="admin-layout">
-        <aside class="sidebar">
-            <div class="brand">
-                <img class="brand-logo" src="/images/Rfavicon.png" alt="Rudraksh Creation">
-                <div>
-                    <h4>Rudraksh</h4>
-                    <span>Admin Portal</span>
+        <aside class="sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <img class="brand-logo" src="/images/Rfavicon.png" alt="Rudraksh Creation">
+                    <div>
+                        <h4>Rudraksh</h4>
+                        <span>Admin Portal</span>
+                    </div>
                 </div>
+                <button class="sidebar-menu-toggle" type="button" id="sidebarMenuToggle" aria-controls="adminSidebarNav" aria-expanded="false" aria-label="Toggle admin menu">
+                    <span class="sidebar-menu-toggle-icon" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                    <span class="sidebar-menu-toggle-label">Menu</span>
+                </button>
             </div>
-            <nav class="nav flex-column">
+            <nav class="nav flex-column" id="adminSidebarNav">
                 <a class="nav-link active" href="#" data-admin-view="dashboard">
                     <span>Dashboard</span>
                 </a>
